@@ -21,6 +21,10 @@ const api = {
     const { data } = await axios.get("/api/get-user-playlist/" + userId);
     return data;
   },
+  deletePlaylistEntry: async (playlistEntryId: string) => {
+    const { data } = await axios.delete("/api/delete-playlist-entry/" + playlistEntryId);
+    return data;
+  },
 }
 
 export default api;

@@ -4,16 +4,20 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET (request: NextRequest, { params }: { params: { userId: string } }) {
-  const { userId } = await params;
-
   try {
     const session = await getServerSession(authOptions);
-    if (
-      !session ||
-      !session.user ||
-      (session.user as { id?: string }).id !== userId
-    ) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const userId = params.userId;
+
+    if (!session) {
+      return NextResponse.json({ error: "Hi"}, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     const playlist = await prisma.playlist.findMany({
@@ -21,7 +25,11 @@ export async function GET (request: NextRequest, { params }: { params: { userId:
         userId: userId,
       },
       include: {
-        playlistEntries: true, // Include movie details
+        playlistEntries: {
+          include: {
+            movie: true, // Include movie details
+          },
+        },
       },
     });
 
@@ -29,7 +37,5 @@ export async function GET (request: NextRequest, { params }: { params: { userId:
   } catch (error) {
     console.error("Error fetching user playlist:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }

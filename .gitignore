@@ -19,8 +19,7 @@
 
 # production
 /build
-/public/videos/
-/public/images/
+/public/
 
 # misc
 .DS_Store
