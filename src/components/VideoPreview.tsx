@@ -3,6 +3,7 @@ import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function VideoPreview({ movie }: { movie: { id: string, name: string; releaseDate: string; director: string; description: string; videoFilePath: string; bannerFilePath: string } }) {
   const { id, name, releaseDate, director, description, videoFilePath, bannerFilePath } = movie;
@@ -22,12 +23,25 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
           </div>
           <p className="text-sm mb-1 italic" >{director}</p>
           <p className="overflow-y-auto grow text-sm">{description}</p>
-          <button className="flex justify-center gap-1 w-1/2 rounded-full hover:bg-blue-700 bg-blue-600 p-2 m-1">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <Link 
+            href={`/watch/${id}`}
+            className="flex justify-center gap-1 w-1/2 rounded-full hover:bg-blue-700 bg-blue-600 p-2 m-1"
+          >
+            {/* Play SVG */}
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
               <polygon points="6 3 20 12 6 21 6 3"/>
             </svg>
             <span className="grow text-sm max-lg:hidden">Watch</span>
-          </button>
+          </Link>
         </div>
       </div>
     );
@@ -43,7 +57,7 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
   const playlist = useQuery({
     queryKey: ["playlist", user.data?.id],
     queryFn: () => user.data ? api.getUserPlaylist(user.data.id) : Promise.resolve(null),
-    enabled: true //!!user.data,
+    enabled: !!user.data,
   });
 
   const [addedToPlaylist, setAddedToPlaylist] = useState(false);
@@ -73,6 +87,19 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
     }
   });
 
+  const watchMovie = useMutation({
+    mutationFn: async () => {
+      if (!isInPlaylist) {
+        await createPlaylistEntry.mutateAsync();
+      }
+    },
+    onSuccess: () => {
+      // Placeholder for redirect logic
+      // e.g., router.push(`/watch/${id}`);
+      console.log("Redirect here after adding to playlist");
+    }
+  });
+  
   const deletePlaylistEntry = useMutation({
     mutationFn: () => {
       if (!playlist.data) return Promise.reject("No playlist data");
@@ -191,10 +218,45 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
               </>
             )}
           </button>
-          <button className="flex justify-center gap-1 w-1/2 rounded-full hover:bg-blue-700 bg-blue-600 p-2 m-1">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="6 3 20 12 6 21 6 3"/>
-            </svg>
+          <button 
+            onClick={() => watchMovie.mutate()}
+            className="flex justify-center gap-1 w-1/2 rounded-full hover:bg-blue-700 bg-blue-600 p-2 m-1"
+            disabled={watchMovie.isPending}
+          >
+            {watchMovie.isPending ? (
+              <>
+                {/* Loading spinner SVG */}
+                <svg 
+                  className="animate-spin" 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+              </>
+            ) : (
+              <>
+                {/* Play SVG */}
+                <svg 
+                  width="24" 
+                  height="24" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round"
+                >
+                  <polygon points="6 3 20 12 6 21 6 3"/>
+                </svg>
+              </>
+            )}
             <span className="grow text-sm max-lg:hidden">Watch</span>
           </button>
         </div>

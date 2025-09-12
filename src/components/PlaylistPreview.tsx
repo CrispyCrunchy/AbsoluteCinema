@@ -16,12 +16,7 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
           <Image src={bannerFilePath} fill objectFit="contain" alt="img" />
         </div>
         <div className="flex flex-col w-3/4 pl-4 h-[11rem]">
-          <div className="flex justify-between">
-            <p className="font-bold text-lg">{name}</p>
-            <p className="text-sm text-gray-400">{new Date(releaseDate).getFullYear()}</p>
-          </div>
-          <p className="text-sm mb-1 italic" >{director}</p>
-          <p className="overflow-y-auto grow text-sm">{description}</p>
+          <p className="font-bold text-lg">{name}</p>
           <button className="flex justify-center gap-1 w-1/2 rounded-full hover:bg-blue-700 bg-blue-600 p-2 m-1">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polygon points="6 3 20 12 6 21 6 3"/>
@@ -76,12 +71,7 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
         <Image src={bannerFilePath} fill objectFit="contain" alt="img" />
       </div>
       <div className="flex flex-col w-3/4 pl-4 h-[11rem]">
-        <div className="flex justify-between">
-          <p className="font-bold text-lg">{name}</p>
-          <p className="text-sm text-gray-400">{new Date(releaseDate).getFullYear()}</p>
-        </div>
-        <p className="text-sm mb-1 italic" >{director}</p>
-        <p className="overflow-y-auto grow text-sm">{description}</p>
+        <p className="text-sm text-gray-400">{new Date(releaseDate).getFullYear()}</p>
         <div className="flex relative bottom-0">
           <button
             onClick={() => createPlaylistEntry.mutate()}
