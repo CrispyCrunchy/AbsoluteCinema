@@ -46,11 +46,6 @@ model User {
   sessions        Session[]
 }
 
-model Guest {
-  id              String   @id @default(cuid())
-  name            String?
-}
-
 model VerificationToken {
   identifier String
   token      String   @unique

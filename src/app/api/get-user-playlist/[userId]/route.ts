@@ -3,13 +3,13 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-export async function GET (request: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET (request: NextRequest, context: { params: { userId: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    const userId = params.userId;
+    const { userId } = context.params;
 
     if (!session) {
-      return NextResponse.json({ error: "Hi"}, { status: 401 });
+      return NextResponse.json({ error: "No active session"}, { status: 401 });
     }
 
     const user = await prisma.user.findUnique({
