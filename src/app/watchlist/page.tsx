@@ -6,32 +6,13 @@ import PlaylistPreview from "@/components/PlaylistPreview";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 
 export default function watchlist() {
 
   const { data: session, status: sessionStatus } = useSession();
 
-  // Only run queries if authenticated
-  if (sessionStatus !== "authenticated" || !session?.user) {
-    return (
-      <div>
-        <header className="flex justify-center">
-          <div className="lg:w-3/5 lg:min-w-[64rem] w-full p-5 gap-4 bg-slate-900">
-            <Navigation />
-          </div>
-        </header>
-        <div className="flex justify-center">
-          <div className="flex flex-col lg:w-3/5 lg:min-w-[64rem] w-full p-5 gap-4 bg-slate-900">
-            <div className="flex flex-col lg:w-3/5 w-full gap-4">
-            
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Only runs if authenticated:
   const user = useQuery({
     queryKey: ["user"],
     queryFn: () => api.getCurrentUser(),
@@ -48,7 +29,17 @@ export default function watchlist() {
     ? playlist.data.flatMap((pl: any) => pl.playlistEntries || [])
     : [];
 
-  console.log("Playlist movie entries:", playlistEntries);
+  const [ selectedMovie, setSelectedMovie ] = useState(playlistEntries.length > 0 ? playlistEntries[0].movie : null);
+
+  useEffect(() => {
+    if (playlistEntries.length > 0 && !selectedMovie) {
+      setSelectedMovie(playlistEntries[0].movie);
+    }
+  }, [playlistEntries, selectedMovie]);
+
+  if (sessionStatus !== "loading" && sessionStatus !== "authenticated") {
+    redirect('/'); // Redirect to home page if not authenticated
+  }
 
   return(
     <div>
@@ -61,21 +52,55 @@ export default function watchlist() {
         <div className="flex flex-col lg:w-3/5 lg:min-w-[64rem] w-full p-5 gap-4 bg-slate-900">
           <div className="flex max-lg:flex-col gap-4 h-auto">
             <div className="flex flex-col lg:w-3/5 w-full gap-4">
-              <video width="auto" height="auto" controls preload="metadata">
-                <source src="/video/gullivers_travels1939_512kb.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-              <div className="flex gap-4">
-                <Image src="/images/gullivers-travels.jpg" alt="Gulliver's Travels" width={120} height={180} />
-                <div className="flex flex-col w-full">
-                  <div className="flex justify-between">
-                    <h1 className="text-2xl font-bold">Gulliver's Travels</h1>
-                    <p className="text-sm text-gray-400">1939-12-22</p>
+              {selectedMovie ?
+                <>
+                  <video width="auto" height="auto" controls preload="metadata">
+                    <source src={selectedMovie.videoFilePath} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                  <div className="flex gap-4">
+                    <Image src={selectedMovie.bannerFilePath} alt="Gulliver's Travels" width={120} height={180} />
+                    <div className="flex flex-col w-full">
+                      <div className="flex justify-between">
+                        <h1 className="text-2xl font-bold">
+                          {selectedMovie.name}
+                        </h1>
+                        <p className="text-sm text-gray-400">
+                          {new Date(selectedMovie.releaseDate).toISOString().replace('-', '/').split('T')[0].replace('-', '/')}
+                        </p>
+                      </div>
+                      <p className="text-sm mb-1 italic">
+                        {selectedMovie.director}
+                      </p>
+                      <p className="overflow-y-auto grow text-sm">
+                        {selectedMovie.description}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm mb-1 italic">Dave Fleischer</p>
-                  <p className="overflow-y-auto grow text-sm">A doctor washes ashore on an island inhabited by little people.</p>
-                </div>
-              </div>
+                </>
+              :
+                <>
+                  <div className="" >
+                  </div>
+                  <div className="flex gap-4">
+                    <Image src="/images/gullivers-travels.jpg" alt="Gulliver's Travels" width={120} height={180} />
+                    <div className="flex flex-col w-full">
+                      <div className="flex justify-between">
+                        <div className="w-1/2 rounded-full bg-gray-400 p-3 m-1" />
+                        <p className="text-sm text-gray-400">
+                          1939-12-22
+                        </p>
+                      </div>
+                      <p className="text-sm mb-1 italic">
+                        Dave Fleischer
+                      </p>
+                      <p className="overflow-y-auto grow text-sm">
+                        A doctor washes ashore on an island inhabited by little people.
+                      </p>
+                    </div>
+                  </div>
+                </>
+              }  
             </div>
             <div className="flex flex-col lg:w-2/5 w-full h-[45rem] p-5 gap-1 bg-slate-900 overflow-y-auto">
               {playlist.isLoading ? <>

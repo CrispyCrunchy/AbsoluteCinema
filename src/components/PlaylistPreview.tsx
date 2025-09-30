@@ -75,7 +75,7 @@ export default function PlaylistPreview({ movie }: { movie: { id: string, name: 
   return (
     <div className="flex bg-gray-500 rounded-lg m-2 p-4">
       <div className="relative w-1/4 h-<300>">
-        <Image src={bannerFilePath} fill objectFit="contain" alt="img" />
+        <Image src={bannerFilePath} fill sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw" className="object-contain" alt="img" />
       </div>
       <div className="flex flex-col w-3/4 pl-4 h-auto">
         <div className="flex justify-between">
