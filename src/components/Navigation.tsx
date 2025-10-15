@@ -2,12 +2,14 @@
 
 import api from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default function Navigation () {
 
+  const { data: session, status: sessionStatus } = useSession();
+ 
   const user = useQuery({
     queryKey: ["user"],
     queryFn: api.getCurrentUser
@@ -41,7 +43,16 @@ export default function Navigation () {
           <rect width="7" height="7" x="3" y="14" rx="1"/>
         </svg>
       </Link>
-      <Link href="/watchlist" className="bg-slate-400 hover:bg-slate-500 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center">
+      <Link href="/watchlist" 
+        className={
+          `bg-slate-400 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center ${ 
+            session 
+              ? "hover:bg-slate-500"
+              : "cursor-not-allowed opacity-50" 
+            }
+          `
+        }
+      >
         <p className="max-md:hidden">Watchlist</p>
         {/* Play SVG */}
         <svg 
@@ -59,7 +70,15 @@ export default function Navigation () {
           <path d="m9 8 6 4-6 4Z"/>
         </svg>
       </Link>
-      <Link href="/profile" className="bg-slate-400 hover:bg-slate-500 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center">
+      <Link href="/profile" 
+        className={
+          `bg-slate-400 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center ${
+            session 
+              ? "hover:bg-slate-500" 
+              : "cursor-not-allowed opacity-50"
+            }
+          `
+        }>
         <p className="max-md:hidden">Profile</p>
         {/* User SVG */}
         <svg 

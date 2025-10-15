@@ -8,6 +8,7 @@ import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
+import { Rating } from "../../components/Ratings"; 
 
 export default function watchlist() {
 
@@ -75,28 +76,26 @@ export default function watchlist() {
                       <p className="overflow-y-auto grow text-sm">
                         {selectedMovie.description}
                       </p>
+                      <div className="flex flex-row-reverse">
+                        <Rating />
+                      </div>
+                      
                     </div>
                   </div>
                 </>
               :
                 <>
-                  <div className="" >
-                  </div>
-                  <div className="flex gap-4">
-                    <Image src="/images/gullivers-travels.jpg" alt="Gulliver's Travels" width={120} height={180} />
-                    <div className="flex flex-col w-full">
-                      <div className="flex justify-between">
+                  <div className="flex flex-col gap-4">
+                    <div className="bg-black w-full h-[30rem]" />
+                    <div className="flex gap-4">
+                      <div className="w-1/4 h-full bg-gray-300" />
+                      <div className="flex flex-col w-3/4">
                         <div className="w-1/2 rounded-full bg-gray-400 p-3 m-1" />
-                        <p className="text-sm text-gray-400">
-                          1939-12-22
-                        </p>
+                        <div className="w-full rounded-full bg-gray-400 p-1 m-1" />
+                        <div className="w-full rounded-full bg-gray-400 p-1 m-1" />
+                        <div className="w-full rounded-full bg-gray-400 p-1 m-1" />
+                        <div className="w-2/3 rounded-full bg-gray-400 p-1 m-1" />
                       </div>
-                      <p className="text-sm mb-1 italic">
-                        Dave Fleischer
-                      </p>
-                      <p className="overflow-y-auto grow text-sm">
-                        A doctor washes ashore on an island inhabited by little people.
-                      </p>
                     </div>
                   </div>
                 </>
@@ -123,7 +122,6 @@ export default function watchlist() {
               </> : null}
               {playlist.isError ? <div className="flex justify-center">Error loading movies</div> : null}
               {playlist.isSuccess ? <>
-                {/*Replace VideoPreview with PlaylistPreview*/}
                 {playlistEntries.map((entry: any, index: any) => (
                   <PlaylistPreview movie={entry.movie} key={index} />
                 ))}

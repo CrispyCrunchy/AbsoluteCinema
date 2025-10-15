@@ -25,6 +25,14 @@ const api = {
     const { data } = await axios.delete("/api/delete-playlist-entry/" + playlistEntryId);
     return data;
   },
+  getMovieById: async (movieId: string) => {
+    const { data } = await axios.get("/api/get-movie-by-id/" + movieId);
+    return data;
+  },
+  getMovieRating: async (movieId: string) => {
+    const { data } = await axios.get("/api/get-movie-rating/" + movieId);
+    return data;
+  }
 }
 
 export default api;

@@ -3,6 +3,8 @@ import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import router from "next/router";
+import Link from "next/link";
 
 export default function PlaylistPreview({ movie }: { movie: { id: string, name: string; releaseDate: string; director: string; description: string; videoFilePath: string; bannerFilePath: string } }) {
   const { id, name, releaseDate, director, description, videoFilePath, bannerFilePath } = movie;
@@ -46,17 +48,6 @@ export default function PlaylistPreview({ movie }: { movie: { id: string, name: 
       setAddedToPlaylist(false);
     }
   }, [isInPlaylist, playlist.isSuccess, id]);
-
-  const watchMovie = useMutation({
-    mutationFn: async () => {
-      // Placeholder for watch movie logic
-    },
-    onSuccess: () => {
-      // Placeholder for redirect logic
-      // e.g., router.push(`/watch/${id}`);
-      console.log("Redirect here after adding to playlist");
-    }
-  });
   
   const deletePlaylistEntry = useMutation({
     mutationFn: () => {
@@ -146,12 +137,25 @@ export default function PlaylistPreview({ movie }: { movie: { id: string, name: 
             }
             
           </button>
-          <button className="flex justify-center gap-1 w-1/2 rounded-full hover:bg-blue-700 bg-blue-600 p-2 m-1">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <Link 
+            href={`/watchlist/${id}`} 
+            className="flex justify-center gap-1 w-1/2 rounded-full hover:bg-blue-700 bg-blue-600 p-2 m-1"
+          >
+            {/* Play SVG */}
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+            >
               <polygon points="6 3 20 12 6 21 6 3"/>
             </svg>
             <span className="grow text-sm max-lg:hidden">Watch</span>
-          </button>
+          </Link>
         </div>
       </div>
     </div>

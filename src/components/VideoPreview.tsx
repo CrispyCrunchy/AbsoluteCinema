@@ -1,13 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import api from "@/lib/axios";
 import { useSession } from "next-auth/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function VideoPreview({ movie }: { movie: { id: string, name: string; releaseDate: string; director: string; description: string; videoFilePath: string; bannerFilePath: string } }) {
   const { id, name, releaseDate, director, description, videoFilePath, bannerFilePath } = movie;
   const { data: session, status: sessionStatus } = useSession();
+    const router = useRouter();
 
   // Only run queries if authenticated
   if (sessionStatus !== "authenticated" || !session?.user) {
@@ -24,7 +28,7 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
           <p className="text-sm mb-1 italic" >{director}</p>
           <p className="overflow-y-auto grow text-sm">{description}</p>
           <Link 
-            href={`/watch/${id}`}
+            href={`/watchlist/${id}`}
             className="flex justify-center gap-1 w-1/2 rounded-full hover:bg-blue-700 bg-blue-600 p-2 m-1"
           >
             {/* Play SVG */}
@@ -92,11 +96,7 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
       if (!isInPlaylist) {
         await createPlaylistEntry.mutateAsync();
       }
-    },
-    onSuccess: () => {
-      // Placeholder for redirect logic
-      // e.g., router.push(`/watch/${id}`);
-      console.log("Redirect here after adding to playlist");
+      await router.push(`watchlist/${id}`);
     }
   });
   
@@ -219,7 +219,7 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
             )}
           </button>
           <button 
-            onClick={() => watchMovie.mutate()}
+            onClick={ () => { watchMovie.mutate(); } } 
             className="flex justify-center gap-1 w-1/2 rounded-full hover:bg-blue-700 bg-blue-600 p-2 m-1"
             disabled={watchMovie.isPending}
           >

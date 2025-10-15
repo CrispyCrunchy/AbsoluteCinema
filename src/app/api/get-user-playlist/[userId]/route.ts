@@ -6,7 +6,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 export async function GET (request: NextRequest, context: { params: { userId: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    const userId = context.params.userId;
+    const { userId } = await context.params;
 
     if (!session) {
       return NextResponse.json({ error: "No active session"}, { status: 401 });

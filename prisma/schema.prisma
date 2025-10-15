@@ -44,6 +44,7 @@ model User {
   playlist        Playlist?
   accounts        Account[]
   sessions        Session[]
+  reviews         Review[]
 }
 
 model VerificationToken {
@@ -63,6 +64,7 @@ model Movie {
   videoFilePath   String
   bannerFilePath  String
   playlistEntries PlaylistEntry[]
+  reviews         Review[]
 }
 
 model Playlist {
@@ -73,9 +75,25 @@ model Playlist {
 }
 
 model PlaylistEntry {
-  id              String  @id @default(cuid())
+  id              String    @id @default(cuid())
   playlistId      String
   movieId         String
-  playlist        Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
-  movie           Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  watchStatus     Boolean   @default(false)
+  playlist        Playlist  @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  movie           Movie     @relation(fields: [movieId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  movieId   String
+  userId    String
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([movieId, userId])
 }
