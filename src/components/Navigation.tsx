@@ -23,7 +23,7 @@ export default function Navigation () {
 
   return (
     <div className="flex w-full text-center gap-4">
-      <Link href="/" className="bg-slate-400 hover:bg-slate-500 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center">
+      <Link href="/" className="bg-slate-500 hover:bg-slate-600 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center">
         <p className="max-md:hidden">Browse</p>
         {/* Grid SVG */}
         <svg 
@@ -45,9 +45,9 @@ export default function Navigation () {
       </Link>
       <Link href="/watchlist" 
         className={
-          `bg-slate-400 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center ${ 
+          `bg-slate-500 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center ${ 
             session 
-              ? "hover:bg-slate-500"
+              ? "hover:bg-slate-600"
               : "cursor-not-allowed opacity-50" 
             }
           `
@@ -72,9 +72,9 @@ export default function Navigation () {
       </Link>
       <Link href="/profile" 
         className={
-          `bg-slate-400 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center ${
+          `bg-slate-500 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center ${
             session 
-              ? "hover:bg-slate-500" 
+              ? "hover:bg-slate-600" 
               : "cursor-not-allowed opacity-50"
             }
           `
