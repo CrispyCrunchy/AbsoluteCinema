@@ -15,12 +15,6 @@ export default function Navigation () {
     queryFn: api.getCurrentUser
   });
 
-  const playlist = useQuery({
-    queryKey: ["playlist", user.data?.id],
-    queryFn: () => user.data ? api.getUserPlaylist(user.data.id) : Promise.resolve(null),
-    enabled: !!user.data,
-  });
-
   return (
     <div className="flex w-full text-center gap-4">
       <Link href="/" className="bg-slate-500 hover:bg-slate-600 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center">
@@ -70,7 +64,9 @@ export default function Navigation () {
           <path d="m9 8 6 4-6 4Z"/>
         </svg>
       </Link>
-      <Link href="/profile" 
+      <Link 
+        href={user.data?.id ? `/profile/${user.data.id}` : "#"} 
+        onClick={(e) => { if (!user.data?.id) e.preventDefault(); }}
         className={
           `bg-slate-500 rounded-md p-2 text-white border-black border-x basis-1/4 text-sm self-center ${
             session 
