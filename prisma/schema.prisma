@@ -41,10 +41,12 @@ model User {
   email           String?   @unique
   emailVerified   DateTime?
   image           String?
+  about           String?
   playlist        Playlist?
   accounts        Account[]
   sessions        Session[]
   reviews         Review[]
+  watchedMovies   WatchedMovies[]
 }
 
 model VerificationToken {
@@ -65,6 +67,7 @@ model Movie {
   bannerFilePath  String
   playlistEntries PlaylistEntry[]
   reviews         Review[]
+  watchedBy       WatchedMovies[]
 }
 
 model Playlist {
@@ -84,18 +87,31 @@ model PlaylistEntry {
 }
 
 model Review {
-  id        String   @id @default(cuid())
-  movieId   String
-  userId    String
-  userImage String?
-  userName  String?
-  rating    Int?
-  comment   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  movieId     String
+  userId      String
+  userImage   String?
+  userName    String?
+  rating      Int?
+  comment     String?
+  movieTitle  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@unique([movieId, userId])
+}
+
+model WatchedMovies {
+  id        String   @id @default(cuid())
+  userId    String
+  movieId   String
+  watchedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, movieId])
 }

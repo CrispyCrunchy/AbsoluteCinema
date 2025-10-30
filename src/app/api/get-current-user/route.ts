@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import prisma from "@/lib/prisma";
 
-
 export async function GET ( request: NextRequest ) {
   
   try {

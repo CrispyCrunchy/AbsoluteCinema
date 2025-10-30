@@ -20,7 +20,7 @@ export default function watchlist() {
   const movie = useQuery({
     queryKey: ["movie", params.movieId],
     queryFn: () => api.getMovieById(params.movieId as string), // Example movie ID
-    enabled: true,
+    enabled: !!params.movieId,
   });
 
   const [selectedMovie, setSelectedMovie ] = useState(movie.data || null);
@@ -287,16 +287,22 @@ export default function watchlist() {
               </>: null}
             </div>
           </div>
-          <div className="flex flex-col lg:min-w-[64rem] w-full p-5 gap-4 bg-slate-900">
-            <div className="flex flex-col lg:w-3/5 md:w-4/5 w-full gap-2">
+          <hr className="border-gray-600" />
+          <div className="flex flex-col lg:min-w-[64rem] w-full p-5 gap-5">
+            <div className="flex flex-col lg:w-4/5 md:w-4/5 w-full gap-2">
               <div className="flex justify-between items-center">
-                <Image 
-                  src= {user.data?.image ?? "/images/default-avatar.png"} 
-                  alt="User Profile" 
-                  width={40} 
-                  height={40} 
-                  className="rounded-full"
-                />
+                <div className="flex gap-3 items-center">
+                  <Image 
+                    src= {user.data?.image ?? "/images/default-avatar.jpg"} 
+                    alt="User Profile" 
+                    width={40} 
+                    height={40} 
+                    className="rounded-full"
+                  />
+                  <Link href="/profile/{user.data?.id}" className="font-bold hover:underline">
+                    {user.data?.name ?? "Anonymous"}
+                  </Link>
+                </div>
                 <Rating 
                   style={{ maxWidth: 100 }} 
                   value={userRating} 

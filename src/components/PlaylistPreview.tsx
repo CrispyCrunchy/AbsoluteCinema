@@ -63,6 +63,33 @@ export default function PlaylistPreview({ movie }: { movie: { id: string, name: 
     }
   });
 
+  const [watchedStatus, setWatchedStatus] = useState(false);
+
+  const watchStatusQuery = useQuery({
+    queryKey: ["watchedStatus", id],
+    queryFn: () => api.getWatchedMovie(id),
+    enabled: !!user.data,
+  });
+
+  useEffect(() => {
+    if (watchStatusQuery.isSuccess) {
+      setWatchedStatus(watchStatusQuery.data);
+    }
+  }, [watchStatusQuery.isSuccess, watchStatusQuery.data]);
+
+  const setWatchedMovie = useMutation({
+    mutationFn: () => {
+      if (watchedStatus) {
+        return api.deleteWatchedMovie(id);
+      } else {
+        return api.createWatchedMovie(id);
+      }
+    },
+    onSuccess: () => {
+      setWatchedStatus(!watchedStatus);
+    }
+  });
+
   return (
     <div className="flex bg-gray-500 rounded-lg m-2 p-4">
       <div className="relative w-1/4 h-<300>">
@@ -73,7 +100,18 @@ export default function PlaylistPreview({ movie }: { movie: { id: string, name: 
           <p className="font-bold text-lg">{name}</p>
           <p className="text-sm text-gray-400">{new Date(releaseDate).getFullYear()}</p>
         </div>
-        <p className="text-sm mb-1 italic" >{director}</p>
+        <div className="flex justify-between gap-3">
+          <p className="text-xs mb-1 italic" >{director}</p>
+          <button onClick={() => setWatchedMovie.mutate()} className="text-xs mb-1 italic underline">
+            { setWatchedMovie.isPending ?
+              "Updating..."
+            : watchedStatus ? 
+                "Watched"
+              : 
+                "Mark as Watched"
+            }
+          </button>
+        </div>
         <div className="flex relative bottom-0">
           <button
             onClick={() => deletePlaylistEntry.mutate()}

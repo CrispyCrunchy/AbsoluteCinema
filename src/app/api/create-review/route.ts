@@ -42,6 +42,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(updated, { status: 200 });
     }
 
+    const movie = await prisma.movie.findUnique({
+      where: { id: movieId },
+    });
+
+    if (!movie) {
+      return NextResponse.json({ error: "Movie not found" }, { status: 404 });
+    }
+
     // Otherwise, create a new review.
     const post = await prisma.review.create({
       data: {
@@ -51,6 +59,7 @@ export async function POST(request: NextRequest) {
         userName: user.name,
         rating: postData.rating,
         comment: postData.comment,
+        movieTitle: movie.name,
       }
     });
 

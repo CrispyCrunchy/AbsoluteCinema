@@ -14,6 +14,14 @@ const api = {
     const { data } = await axios.post("/api/create-review", postData);
     return data;
   },
+  createWatchedMovie: async (movieId: string) => {
+    const { data } = await axios.post("/api/create-watched-movie/" + movieId);
+    return data;
+  },
+  deleteWatchedMovie: async (movieId: string) => {
+    const { data } = await axios.delete("/api/delete-watched-movie/" + movieId);
+    return data;
+  },
   getMovies: async () => {
     const { data } = await axios.get("/api/get-movies");
     return data;
@@ -40,6 +48,22 @@ const api = {
   }, 
   deletePlaylistEntry: async (playlistEntryId: string) => {
     const { data } = await axios.delete("/api/delete-playlist-entry/" + playlistEntryId);
+    return data;
+  },
+  getUserById: async (userId: string) => {
+    const { data } = await axios.get("/api/get-user-by-id/" + userId);
+    return data;
+  },
+  getUserReviews: async (userId: string) => {
+    const { data } = await axios.get("/api/get-user-reviews/" + userId);
+    return data;
+  },
+  getWatchedMovie: async (movieId: string) => {
+    const { data } = await axios.get("/api/get-watched-movie/" + movieId);
+    return data;
+  },
+  editAboutUser: async (userId: string, aboutText: string) => {
+    const { data } = await axios.put("/api/edit-about-user/" + userId, { about: aboutText });
     return data;
   },
 }

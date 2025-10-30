@@ -82,6 +82,7 @@ export default function watchlist() {
     onSuccess: () => {
       setUserComment("");
       setUserRating(0);
+      reviews.refetch();
     }
   });
 
@@ -147,7 +148,7 @@ export default function watchlist() {
                 </>
               }  
             </div>
-            <div className="flex flex-col lg:w-2/5 w-3/5 justify-center h-full p-4 bg-slate-900 overflow-y-scroll">
+            <div className="flex flex-col lg:w-2/5 w-3/5 h-full p-4 bg-slate-900 overflow-y-scroll">
               {playlist.isLoading ? <>
                 {[...Array(4)].map((videoSkeleton: any, index: any) =>
                   <div key={index} className="animate-pulse flex bg-gray-500 rounded-lg m-2 p-4">
@@ -177,7 +178,7 @@ export default function watchlist() {
               <div className="flex justify-between items-center">
                 <div className="flex gap-3 items-center">
                   <Image 
-                    src= {user.data?.image ?? "/images/default-avatar.png"} 
+                    src= {user.data?.image ?? "/images/default-avatar.jpg"} 
                     alt="User Profile" 
                     width={40} 
                     height={40} 

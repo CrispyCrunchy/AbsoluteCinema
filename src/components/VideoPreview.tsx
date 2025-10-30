@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 export default function VideoPreview({ movie }: { movie: { id: string, name: string; releaseDate: string; director: string; description: string; videoFilePath: string; bannerFilePath: string } }) {
   const { id, name, releaseDate, director, description, videoFilePath, bannerFilePath } = movie;
   const { data: session, status: sessionStatus } = useSession();
-    const router = useRouter();
+  const router = useRouter();
 
   // Only run queries if authenticated
   if (sessionStatus !== "authenticated" || !session?.user) {
@@ -114,17 +114,61 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
     }
   });
 
+  const [watchedStatus, setWatchedStatus] = useState(false);
+
+  const watchStatusQuery = useQuery({
+    queryKey: ["watchedStatus", id],
+    queryFn: () => api.getWatchedMovie(id),
+    enabled: !!user.data,
+  });
+
+  useEffect(() => {
+    if (watchStatusQuery.isSuccess) {
+      setWatchedStatus(watchStatusQuery.data);
+    }
+  }, [watchStatusQuery.isSuccess, watchStatusQuery.data]);
+
+  const setWatchedMovie = useMutation({
+    mutationFn: () => {
+      if (watchedStatus) {
+        return api.deleteWatchedMovie(id);
+      } else {
+        return api.createWatchedMovie(id);
+      }
+    },
+    onSuccess: () => {
+      setWatchedStatus(!watchedStatus);
+    }
+  });
+      
+
   return (
     <div className="flex bg-gray-500 rounded-lg m-2 p-4">
-      <div className="relative w-1/4 h-<300>">
-        <Image src={bannerFilePath} fill sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw" className="object-contain" alt="img" />
+      <div className="flex flex-col relative w-1/4 h-<300>">
+        <Image 
+          src={bannerFilePath} 
+          fill 
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw" 
+          alt="img"
+        />
       </div>
       <div className="flex flex-col w-3/4 pl-4 h-[11rem]">
         <div className="flex justify-between">
           <p className="font-bold text-lg">{name}</p>
           <p className="text-sm text-gray-400">{new Date(releaseDate).getFullYear()}</p>
         </div>
-        <p className="text-sm mb-1 italic" >{director}</p>
+        <div className="flex justify-between">
+          <p className="text-sm mb-1 italic" >{director}</p>
+          <button onClick={() => setWatchedMovie.mutate()} className="text-sm mb-1 italic underline">
+            { setWatchedMovie.isPending ?
+              "Updating..."
+            : watchedStatus ? 
+                "Watched"
+              : 
+                "Mark as Watched"
+            }
+          </button>
+        </div>
         <p className="overflow-y-auto grow text-sm">{description}</p>
         <div className="flex relative bottom-0">
           <button
