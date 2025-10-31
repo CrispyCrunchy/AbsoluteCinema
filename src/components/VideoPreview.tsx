@@ -140,7 +140,6 @@ export default function VideoPreview({ movie }: { movie: { id: string, name: str
       setWatchedStatus(!watchedStatus);
     }
   });
-      
 
   return (
     <div className="flex bg-gray-500 rounded-lg m-2 p-4">
