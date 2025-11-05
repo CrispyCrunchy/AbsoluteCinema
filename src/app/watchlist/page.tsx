@@ -249,7 +249,7 @@ export default function watchlist() {
                                 height={40} 
                                 className="rounded-full"
                               />
-                              <Link href={`/profile/${review.id}`} className="font-bold hover:underline">
+                              <Link href={`/profile/${review.userId}`} className="font-bold hover:underline">
                                 {review.userName ?? "Anonymous"}
                               </Link>
                             </div>
